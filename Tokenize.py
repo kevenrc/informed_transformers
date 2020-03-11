@@ -1,5 +1,6 @@
 import spacy
 import re
+import numpy as np
 
 class tokenize(object):
     
@@ -14,4 +15,8 @@ class tokenize(object):
         sentence = re.sub(r"\,+", ",", sentence)
         sentence = re.sub(r"\?+", "?", sentence)
         sentence = sentence.lower()
-        return [tok.text for tok in self.nlp.tokenizer(sentence) if tok.text != " "]
+        tokens = [tok.text for tok in self.nlp.tokenizer(sentence) if tok.text != " "]
+        np.save(lang + '_sentences.npy', sentence)
+        np.save(lang + '_tokens.npy', sentence)
+        
+        return tokens
