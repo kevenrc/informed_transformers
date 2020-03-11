@@ -7,7 +7,7 @@ class tokenize(object):
     def __init__(self, lang, savetokens):
         self.nlp = spacy.load(lang)
         self.lang = lang
-        setlf.savetokens = savetokens
+        self.savetokens = savetokens
 
     def tokenizer(self, sentence):
         sentence = re.sub(
