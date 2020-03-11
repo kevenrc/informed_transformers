@@ -32,8 +32,8 @@ def create_fields(opt):
     
     print("loading spacy tokenizers...")
     
-    t_src = tokenize(opt.src_lang)
-    t_trg = tokenize(opt.trg_lang)
+    t_src = tokenize(opt.src_lang, opt.savetokens)
+    t_trg = tokenize(opt.trg_lang, opt.savetokens)
 
     TRG = data.Field(lower=True, tokenize=t_trg.tokenizer, init_token='<sos>', eos_token='<eos>')
     SRC = data.Field(lower=True, tokenize=t_src.tokenizer)
