@@ -22,4 +22,4 @@ class tokenize(object):
             np.save(self.lang + '_sentences.npy', sentence)
             np.save(self.lang + '_tokens.npy', sentence)
 
-    return tokens
+        return tokens
