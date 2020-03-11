@@ -28,8 +28,8 @@ def train_model(model, opt):
                     
         for i, batch in enumerate(opt.train): 
 
-            src = batch.src.transpose(0,1).to('cuda')
-            trg = batch.trg.transpose(0,1).to('cuda')
+            src = batch.src.transpose(0,1).to(device=opt.device)
+            trg = batch.trg.transpose(0,1).to(device=opt.device)
             trg_input = trg[:, :-1]
             src_mask, trg_mask = create_masks(src, trg_input, opt)
             preds = model(src, trg_input, src_mask, trg_mask)
