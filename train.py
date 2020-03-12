@@ -95,6 +95,10 @@ def main():
     opt.train = create_dataset(opt, SRC, TRG)
     model = get_model(opt, len(SRC.vocab), len(TRG.vocab))
 
+    if opt.savetokens == 1:
+        pickle.dump(SRC.vocab, open('SRC_vocab.p', 'wb')) # saves torchtext Vocab object
+        pickle.dump(TRG.vocab, open('TRG_vocab.p', 'wb')) # saves torchtext Vocab object
+        
     opt.optimizer = torch.optim.Adam(model.parameters(), lr=opt.lr, betas=(0.9, 0.98), eps=1e-9)
     if opt.SGDR == True:
         opt.sched = CosineWithRestarts(opt.optimizer, T_max=opt.train_len)
