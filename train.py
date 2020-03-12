@@ -88,12 +88,14 @@ def main():
 
     opt = parser.parse_args()
     
-    opt.device = 'cpu' if opt.no_cuda is False else 'cuda'
+    opt.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(opt.device)
     
     read_data(opt)
     SRC, TRG = create_fields(opt)
     opt.train = create_dataset(opt, SRC, TRG)
     model = get_model(opt, len(SRC.vocab), len(TRG.vocab))
+    model = model.to(device=opt.device)
 
     if opt.savetokens == 1:
         pickle.dump(SRC.vocab, open('SRC_vocab.p', 'wb')) # saves torchtext Vocab object
