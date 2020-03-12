@@ -65,8 +65,7 @@ def get_model(opt, src_vocab, trg_vocab):
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p) 
     
-    if opt.device == 0:
-        model = model.cuda()
+    model = model.cuda()
     
     return model
     
