@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
-
+import torch.nn.functional as F
 import pickle
+import numpy as np
 
 from Sublayers import FeedForward, MultiHeadAttention, Norm
 
@@ -15,12 +16,16 @@ def get_one_hot_vectors(input_sequence, y_t):
 
   Returns:
       one_hot_vector {torch tensor}
-  """    
+  """ 
+  input_sequence = input_sequence.squeeze(0)
+  print(y_t)
+  y_t = y_t.squeeze(0)
   dictionary = pickle.load(open('data/tokenized_translation_dictionary.p', 'rb'))
-  one_hot_vector = torch.zeros(len(input_sequence))
-  for i, en_word in enumerate(input_sequence):
-      if dictionary.get(en_word, None) == y_t:
-          one_hot_vector[i] = 1
+  one_hot_vector = torch.zeros(len(input_sequence), len(y_t))
+  for j, y in enumerate(y_t):
+    for i, en_word in enumerate(input_sequence):
+        if dictionary.get(en_word.item(), None) == y.item():
+            one_hot_vector[i, j] = 1
   return one_hot_vector
 
 
@@ -65,13 +70,17 @@ class DecoderLayer(nn.Module):
         x2 = self.norm_2(x)
 
         # beta's
-        matrix_plot = torch.bmm(e_outputs, torch.transpose(x2, 1, 2))
-        betas = matrix_plot[:, -1]
+        betas = torch.bmm(e_outputs, torch.transpose(x2, 1, 2)).squeeze(0)
+        betas = torch.div(betas, np.sqrt(x.shape[-1]))
+        betas = F.softmax(betas, dim=1)
 
-        print(src_tokens, target_token)
-        alphas = get_one_hot_vectors(src_tokens, target_token)
-        print(len(alphas), len(betas))
-        assert len(betas) == len(alphas)
+        alphas = get_one_hot_vectors(src_tokens, target_token).cuda()
+        sum_alpha = torch.sum(alphas, dim=0)
+        assert betas.shape == alphas.shape
+        alpha_beta = betas * alphas
+        sum_ab = torch.sum(alpha_beta[:, torch.nonzero(sum_alpha).squeeze(1)], dim=0)
+        loss_align = torch.sum(-torch.log(sum_ab))
+
 
         # encoder-decoder attention block
         x = x + self.dropout_2(self.attn_2(x2, e_outputs, e_outputs, \
