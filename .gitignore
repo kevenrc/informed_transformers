@@ -1,4 +1,6 @@
 *.pyc
+__pycache__/
+__pycache__/*
 weights/
 weights_h2_d8/
 experiment1/
