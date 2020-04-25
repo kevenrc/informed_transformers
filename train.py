@@ -1,6 +1,7 @@
 import argparse
 import time
 import torch
+import pickle
 from Models import get_model
 from Process import *
 import torch.nn.functional as F
@@ -93,6 +94,15 @@ def main():
     
     read_data(opt)
     SRC, TRG = create_fields(opt)
+
+    # convert translation dictionary to tokens ditionary
+    translation_dictionar = pickle.load(open('data/translation_dictionary.p', 'rb'))
+    new_dict = {}
+    for en_word, fr_word in translation_dictionar.items():
+        new_dict[SRC.vocab.stoi[en_word]] = TRG.vocab.stoi[fr_word]
+    
+    pickle.dump(new_dict, open('data/tokenized_translation_dictionary.p', 'wb'))
+
     opt.train = create_dataset(opt, SRC, TRG)
     model = get_model(opt, len(SRC.vocab), len(TRG.vocab))
     model = model.to(device=opt.device)
