@@ -8,6 +8,11 @@ from Sublayers import FeedForward, MultiHeadAttention, Norm
 from alphas_matrix_multiplication import get_alpha_matrix
 
 dictionary = pickle.load(open('data/tokenized_translation_dictionary.p', 'rb'))
+max_row = max(dictionary.keys())+1
+max_col= max(dictionary.values())+1
+EF = torch.zeros(max_row, max_col).cuda()
+for k, v in dictionary.items():
+    EF[k, v] = 1
 
 def get_one_hot_vectors(input_sequence, y_t):
   """This function takes in input sequence and target at time step t
@@ -86,7 +91,7 @@ class DecoderLayer(nn.Module):
             # betas_s = torch.div(betas[i], np.sqrt(x.shape[-1])) # compute beta for one sample
             betas_s = betas[i]
 
-            alphas_s = get_alpha_matrix(src_tokens[i], target_token[i], dictionary)
+            alphas_s = get_alpha_matrix(src_tokens[i], target_token[i], EF)
             sum_alpha = torch.sum(alphas_s, dim=0)
             alpha_beta = betas_s * alphas_s
             sum_ab = torch.sum(alpha_beta[:, torch.nonzero(sum_alpha).squeeze(1)], dim=0)

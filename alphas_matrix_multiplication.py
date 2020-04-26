@@ -6,7 +6,7 @@ import torch
 #trg = torch.tensor([2, 10])
 #dictionary = {1:1, 2:2, 4:10}
 
-def get_alpha_matrix(src, trg, dictionary):
+def get_alpha_matrix(src, trg, EF):
     """
     Assuming:
     src is of length M
@@ -22,11 +22,7 @@ def get_alpha_matrix(src, trg, dictionary):
     """
     # convert dictionary into a matrix -- this needs to be generated only once
 
-    max_row = max(dictionary.keys())+1
-    max_col= max(dictionary.values())+1
-    EF = torch.zeros(max_row, max_col).cuda()
-    for k, v in dictionary.items():
-        EF[k, v] = 1
+
 
     # for each sample
     # convert src to one hot encoded matrix
@@ -45,5 +41,10 @@ if __name__ == '__main__':
     src = torch.tensor([0, 0, 1, 4, 4]).cuda()
     trg = torch.tensor([2, 10]).cuda()
     dictionary = {1:1, 2:2, 4:10}
+    max_row = max(dictionary.keys())+1
+    max_col= max(dictionary.values())+1
+    EF = torch.zeros(max_row, max_col).cuda()
+    for k, v in dictionary.items():
+        EF[k, v] = 1
 
-    print(get_alpha_matrix(src, trg, dictionary))
+    print(get_alpha_matrix(src, trg, EF))
