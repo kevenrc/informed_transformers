@@ -17,8 +17,6 @@ def get_one_hot_vectors(input_sequence, y_t):
   Returns:
       one_hot_vector {torch tensor}
   """
-  input_sequence = input_sequence
-  y_t = y_t
   dictionary = pickle.load(open('data/tokenized_translation_dictionary.p', 'rb'))
   one_hot_vector = torch.zeros(len(input_sequence), len(y_t), device='cuda')
   for j, y in enumerate(y_t):
@@ -71,10 +69,12 @@ class DecoderLayer(nn.Module):
 
         # beta's
         betas = torch.bmm(e_outputs, torch.transpose(x2, 1, 2))
+        # (batch_size, src_seq_len, trg_seq_len)
 
         batch_loss = 0 # holds loss over one batch
         for i in range(betas.shape[0]): # loop over samples in a batch
-            betas_s = torch.div(betas[i], np.sqrt(x.shape[-1])) # compute beta for one sample 
+            # betas_s = torch.div(betas[i], np.sqrt(x.shape[-1])) # compute beta for one sample
+            betas_s = betas[i] / torch.sqrt(torch.tensor(x.shape[-1], dtype=torch.float))
             betas_s = F.softmax(betas, dim=1) # beta-softmax of one sample
 
             alphas_s = get_one_hot_vectors(src_tokens[i], target_token[i])
