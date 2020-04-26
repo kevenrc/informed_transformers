@@ -27,23 +27,23 @@ def get_alpha_matrix(src, trg, EF):
     # for each sample
     # convert src to one hot encoded matrix
     src = src.view(-1, 1)
-    ME = torch.zeros(len(src), max_row).cuda()
+    ME = torch.zeros(len(src), max_row, device='cuda')
     ME.scatter_(1, src, 1)
 
     # convert target to one hot encoded matrix
     trg = trg.view(-1, 1)
-    FN = torch.zeros(len(trg), max_col).cuda()
+    FN = torch.zeros(len(trg), max_col, device='cuda')
     FN = torch.transpose(FN.scatter_(1, trg, 1), 0, 1)
     return ME @ EF @ FN
 
 
 if __name__ == '__main__':
-    src = torch.tensor([0, 0, 1, 4, 4]).cuda()
-    trg = torch.tensor([2, 10]).cuda()
+    src = torch.tensor([0, 0, 1, 4, 4], device='cuda')
+    trg = torch.tensor([2, 10], device='cuda')
     dictionary = {1:1, 2:2, 4:10}
     max_row = max(dictionary.keys())+1
     max_col= max(dictionary.values())+1
-    EF = torch.zeros(max_row, max_col).cuda()
+    EF = torch.zeros(max_row, max_col, device='cuda')
     for k, v in dictionary.items():
         EF[k, v] = 1
 
