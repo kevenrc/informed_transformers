@@ -67,6 +67,16 @@ def get_model(opt, src_vocab, trg_vocab):
                 nn.init.xavier_uniform_(p) 
     
     model = model.cuda()
+
+
+    dictionary = pickle.load(open('data/tokenized_translation_dictionary.p', 'rb'))
+    max_row = max(max(dictionary.keys()), src_vocab)+1
+    max_col= max(max(dictionary.values()), trg_vocab)+1
+    EF = torch.zeros(max_row, max_col).cuda()
+    for k, v in dictionary.items():
+        EF[k, v] = 1
+
+    pickle(EF, open('data/EF.p', 'wb'))
     
     return model
     

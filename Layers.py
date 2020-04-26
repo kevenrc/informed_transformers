@@ -7,12 +7,7 @@ import numpy as np
 from Sublayers import FeedForward, MultiHeadAttention, Norm
 from alphas_matrix_multiplication import get_alpha_matrix
 
-dictionary = pickle.load(open('data/tokenized_translation_dictionary.p', 'rb'))
-max_row = max(dictionary.keys())+1
-max_col= max(dictionary.values())+1
-EF = torch.zeros(max_row, max_col).cuda()
-for k, v in dictionary.items():
-    EF[k, v] = 1
+dictionary = pickle.load(open('data/EF.p', 'rb'))
 
 def get_one_hot_vectors(input_sequence, y_t):
   """This function takes in input sequence and target at time step t
