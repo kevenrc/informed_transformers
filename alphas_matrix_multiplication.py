@@ -22,7 +22,7 @@ def get_alpha_matrix(src, trg, EF):
     """
     # convert dictionary into a matrix -- this needs to be generated only once
 
-
+    max_row, max_col = EF.shape
 
     # for each sample
     # convert src to one hot encoded matrix
