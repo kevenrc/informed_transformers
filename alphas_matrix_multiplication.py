@@ -36,8 +36,14 @@ def get_alpha_matrix(src, trg, dictionary):
 
     # convert target to one hot encoded matrix
     trg = trg.view(-1, 1)
-    FN = torch.zeros(len(trg), max_col)
+    FN = torch.zeros(len(trg), max_col).cuda()
     FN = torch.transpose(FN.scatter_(1, trg, 1), 0, 1)
     return ME @ EF @ FN
 
-#print(ME @ EF @ FN)
+
+if __name__ == '__main__':
+    src = torch.tensor([0, 0, 1, 4, 4])
+    trg = torch.tensor([2, 10])
+    dictionary = {1:1, 2:2, 4:10}
+
+    print(get_alpha_matrix(src, trg, dictionary))
