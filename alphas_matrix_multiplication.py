@@ -42,8 +42,8 @@ def get_alpha_matrix(src, trg, dictionary):
 
 
 if __name__ == '__main__':
-    src = torch.tensor([0, 0, 1, 4, 4])
-    trg = torch.tensor([2, 10])
+    src = torch.tensor([0, 0, 1, 4, 4]).cuda()
+    trg = torch.tensor([2, 10]).cuda()
     dictionary = {1:1, 2:2, 4:10}
 
     print(get_alpha_matrix(src, trg, dictionary))
