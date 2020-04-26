@@ -16,7 +16,9 @@ def train_model(model, opt):
     start = time.time()
     if opt.checkpoint > 0:
         cptime = time.time()
-                 
+    epoch_nums = []
+    align_losses = []
+    lexical_losses = []           
     for epoch in range(opt.epochs):
 
         total_loss = 0
@@ -37,6 +39,12 @@ def train_model(model, opt):
             ys = trg[:, 1:].contiguous().view(-1)
             opt.optimizer.zero_grad()
             lexical_loss = F.cross_entropy(preds.view(-1, preds.size(-1)), ys, ignore_index=opt.trg_pad)
+
+            epoch_nums.append(epoch)
+            align_losses.append(align_loss)
+            lexical_losses.append(lexical_loss)
+
+
 
             # Eq. 5 of paper
             lambda_ = 0.3
@@ -67,6 +75,10 @@ def train_model(model, opt):
    
         print("%dm: epoch %d [%s%s]  %d%%  loss = %.3f\nepoch %d complete, loss = %.03f" %\
         ((time.time() - start)//60, epoch + 1, "".join('#'*(100//5)), "".join(' '*(20-(100//5))), 100, avg_loss, epoch + 1, avg_loss))
+    
+    loss_history = torch.FloatTensor([epoch_nums, align_losses, lexical_losses]).t()
+    torch.save(loss_history, 'loss_history.pt')
+
 
 def main():
 

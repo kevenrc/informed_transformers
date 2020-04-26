@@ -5,6 +5,7 @@ import pickle
 import numpy as np
 
 from Sublayers import FeedForward, MultiHeadAttention, Norm
+from alphas_matrix_multiplication import get_alpha_matrix
 
 dictionary = pickle.load(open('data/tokenized_translation_dictionary.p', 'rb'))
 
@@ -85,7 +86,7 @@ class DecoderLayer(nn.Module):
             # betas_s = torch.div(betas[i], np.sqrt(x.shape[-1])) # compute beta for one sample
             betas_s = betas[i]
 
-            alphas_s = get_one_hot_vectors(src_tokens[i], target_token[i])
+            alphas_s = get_alpha_matrix(src_tokens[i], target_token[i], dictionary)
             sum_alpha = torch.sum(alphas_s, dim=0)
             alpha_beta = betas_s * alphas_s
             sum_ab = torch.sum(alpha_beta[:, torch.nonzero(sum_alpha).squeeze(1)], dim=0)
