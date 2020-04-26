@@ -4,3 +4,6 @@ __pycache__/*
 weights/
 weights_h2_d8/
 experiment1/
+
+__pycache__/
+.vscode/
