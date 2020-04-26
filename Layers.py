@@ -7,8 +7,6 @@ import numpy as np
 from Sublayers import FeedForward, MultiHeadAttention, Norm
 from alphas_matrix_multiplication import get_alpha_matrix
 
-dictionary = pickle.load(open('data/EF.p', 'rb'))
-
 def get_one_hot_vectors(input_sequence, y_t):
   """This function takes in input sequence and target at time step t
   and returns a one hot vector (named alpha_hat_t_i in Eq. 3 of Song et al. paper)
@@ -56,7 +54,7 @@ class EncoderLayer(nn.Module):
 # build a decoder layer with two multi-head attention layers and
 # one feed-forward layer
 class DecoderLayer(nn.Module):
-    def __init__(self, d_model, heads, dropout=0.1):
+    def __init__(self, d_model, heads, dropout=0.1, dictionary=None):
         super().__init__()
         self.norm_1 = Norm(d_model)
         self.norm_2 = Norm(d_model)
@@ -69,6 +67,8 @@ class DecoderLayer(nn.Module):
         self.attn_1 = MultiHeadAttention(heads, d_model, dropout=dropout)
         self.attn_2 = MultiHeadAttention(heads, d_model, dropout=dropout)
         self.ff = FeedForward(d_model, dropout=dropout)
+
+        self.dictionary = dictionary
 
     def forward(self, x, e_outputs, src_mask, trg_mask, src_tokens, target_token):
         # decoder attention block
@@ -86,7 +86,7 @@ class DecoderLayer(nn.Module):
             # betas_s = torch.div(betas[i], np.sqrt(x.shape[-1])) # compute beta for one sample
             betas_s = betas[i]
 
-            alphas_s = get_alpha_matrix(src_tokens[i], target_token[i], EF)
+            alphas_s = get_alpha_matrix(src_tokens[i], target_token[i], self.dictionary)
             sum_alpha = torch.sum(alphas_s, dim=0)
             alpha_beta = betas_s * alphas_s
             sum_ab = torch.sum(alpha_beta[:, torch.nonzero(sum_alpha).squeeze(1)], dim=0)
