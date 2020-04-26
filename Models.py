@@ -38,7 +38,7 @@ class Decoder(nn.Module):
         for i in range(self.N):
             x, block_align_loss = self.layers[i](x, e_outputs, src_mask, trg_mask, src_tokens=src_tokens, target_token=target_token)
             align_loss += block_align_loss
-        return self.norm(x), align_loss
+        return self.norm(x), align_loss / self.N
 
 class Transformer(nn.Module):
     def __init__(self, src_vocab, trg_vocab, d_model, N, heads, dropout):
