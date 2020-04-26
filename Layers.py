@@ -85,11 +85,10 @@ class DecoderLayer(nn.Module):
             loss_align = torch.sum(-torch.log(sum_ab)) # holds loss of one sample
 
             batch_loss += loss_align
-
-
+        
         # encoder-decoder attention block
         x = x + self.dropout_2(self.attn_2(x2, e_outputs, e_outputs, \
         src_mask))
         x2 = self.norm_3(x)
         x = x + self.dropout_3(self.ff(x2))
-        return x
+        return x, batch_loss

@@ -34,9 +34,11 @@ class Decoder(nn.Module):
     def forward(self, trg, e_outputs, src_mask, trg_mask, src_tokens, target_token):
         x = self.embed(trg)
         x = self.pe(x)
+        align_loss = 0
         for i in range(self.N):
-            x = self.layers[i](x, e_outputs, src_mask, trg_mask, src_tokens=src_tokens, target_token=target_token)
-        return self.norm(x)
+            x, block_align_loss = self.layers[i](x, e_outputs, src_mask, trg_mask, src_tokens=src_tokens, target_token=target_token)
+            align_loss += block_align_loss
+        return self.norm(x), align_loss
 
 class Transformer(nn.Module):
     def __init__(self, src_vocab, trg_vocab, d_model, N, heads, dropout):
@@ -46,9 +48,9 @@ class Transformer(nn.Module):
         self.out = nn.Linear(d_model, trg_vocab)
     def forward(self, src, trg, src_mask, trg_mask):
         e_outputs = self.encoder(src, src_mask)
-        d_output = self.decoder(trg, e_outputs, src_mask, trg_mask, src_tokens=src, target_token=trg)
+        d_output, align_loss = self.decoder(trg, e_outputs, src_mask, trg_mask, src_tokens=src, target_token=trg)
         output = self.out(d_output)
-        return output
+        return output, align_loss
 
 def get_model(opt, src_vocab, trg_vocab):
 

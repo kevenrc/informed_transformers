@@ -33,10 +33,15 @@ def train_model(model, opt):
             trg = batch.trg.transpose(0,1).to(device=opt.device)
             trg_input = trg[:, :-1]
             src_mask, trg_mask = create_masks(src, trg_input, opt)
-            preds = model(src, trg_input, src_mask, trg_mask)
+            preds, align_loss = model(src, trg_input, src_mask, trg_mask)
             ys = trg[:, 1:].contiguous().view(-1)
             opt.optimizer.zero_grad()
-            loss = F.cross_entropy(preds.view(-1, preds.size(-1)), ys, ignore_index=opt.trg_pad)
+            lexical_loss = F.cross_entropy(preds.view(-1, preds.size(-1)), ys, ignore_index=opt.trg_pad)
+
+            # Eq. 5 of paper
+            lambda_ = 0.3
+            loss = lexical_loss + lambda_*align_loss
+
             loss.backward()
             opt.optimizer.step()
             if opt.SGDR == True: 
