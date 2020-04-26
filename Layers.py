@@ -21,10 +21,16 @@ def get_one_hot_vectors(input_sequence, y_t):
   """
   
   one_hot_vector = torch.zeros(len(input_sequence), len(y_t), device='cuda')
-  for j, y in enumerate(y_t):
-    for i, en_word in enumerate(input_sequence):
-        if dictionary.get(en_word.item(), None) == y.item():
-            one_hot_vector[i, j] = 1
+  for k, v in dictionary.items():
+      try:
+        one_hot_vector[np.where(input_sequence == k)[0], np.where(y_t == v)[0]] = 1
+      except:
+        pass
+
+#   for j, y in enumerate(y_t):
+#     for i, en_word in enumerate(input_sequence):
+#         if dictionary.get(en_word.item(), None) == y.item():
+#             one_hot_vector[i, j] = 1
 
   return one_hot_vector
 
