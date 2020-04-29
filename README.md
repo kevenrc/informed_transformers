@@ -1,4 +1,6 @@
 # Transformer
+This is a modification on the implementation created by Samuel Lynn-Evans and his repo can be found <a href=https://github.com/SamLynnEvans/Transformer>here<\a>.
+  
 
 This is a pytorch implementation of the transformer model. If you'd like to understand the model, or any of the code better, please refer to <a href=https://towardsdatascience.com/how-to-code-the-transformer-in-pytorch-24db27c8f9ec>my tutorial</a>.
 
