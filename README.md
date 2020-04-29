@@ -1,8 +1,11 @@
 # Transformer
-This is a modification on the implementation created by Samuel Lynn-Evans and his repo can be found <a href=https://github.com/SamLynnEvans/Transformer>here<\a>.
-  
+This is a modification on the implementation created by Samuel Lynn-Evans and his repo can be found <a href=https://github.com/SamLynnEvans/Transformer>here</a>.
 
-This is a pytorch implementation of the transformer model. If you'd like to understand the model, or any of the code better, please refer to <a href=https://towardsdatascience.com/how-to-code-the-transformer-in-pytorch-24db27c8f9ec>my tutorial</a>.
+This implementation attempts to learn alignments and save model capacity by being informed by a dictionary saved in data/translation_dictionary.p 
+
+This has been tested by using the 50 most used nouns in the dataset and showed a 12.5% increase in the BLEU score. 
+
+This is a pytorch implementation of the transformer model. If you'd like to understand the model, or any of the code better, please refer to <a href=https://towardsdatascience.com/how-to-code-the-transformer-in-pytorch-24db27c8f9ec>his tutorial</a>.
 
 Using the Europarl dataset plus the dataset in the data folder, I was able to achieve a BLEU score of 0.39 on the test set (current SOTA is around 0.42), after 4/5 days of training on a single 8gb GPU. For more results see the tutorial again.
 
